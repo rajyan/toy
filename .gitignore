@@ -1,0 +1,5 @@
+# CMake
+cmake-build-*/
+
+# ignore all preoject files
+.idea/*
