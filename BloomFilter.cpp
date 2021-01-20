@@ -13,7 +13,7 @@ std::vector<uint32_t> BloomFilter::calcIndices(std::string& key) const {
     uint64_t hash = Hash(key);
     uint32_t upper = hash >> 32;
     uint32_t lower = hash;
-    auto res = std::vector<uint32_t>(m_hashNum);
+    std::vector<uint32_t> res(m_hashNum);
     for (int i = 0; i < m_hashNum; i++) {
         res[i] = (upper + lower * i) % m_size;
     }
@@ -22,8 +22,8 @@ std::vector<uint32_t> BloomFilter::calcIndices(std::string& key) const {
 
 void BloomFilter::add(std::string& key) {
     auto indices = calcIndices(key);
-    for (int i = 0; i < m_hashNum; i++) {
-        m_bits[indices[i]] = true;
+    for (const auto& i: indices) {
+        m_bits[i] = true;
     }
 }
 
