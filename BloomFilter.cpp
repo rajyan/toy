@@ -5,11 +5,11 @@
 #include "BloomFilter.h"
 #include "../library/src/fnv1a.cpp"
 
-uint64_t Hash(std::string& key) {
+uint64_t Hash(const std::string& key) {
     return fnv1a_64(key);
 }
 
-std::vector<uint32_t> BloomFilter::calcIndices(std::string& key) const {
+std::vector<uint32_t> BloomFilter::calcIndices(const std::string& key) const {
     uint64_t hash = Hash(key);
     uint32_t upper = hash >> 32;
     uint32_t lower = hash;
@@ -20,14 +20,14 @@ std::vector<uint32_t> BloomFilter::calcIndices(std::string& key) const {
     return res;
 }
 
-void BloomFilter::add(std::string& key) {
+void BloomFilter::add(const std::string& key) {
     auto indices = calcIndices(key);
     for (const auto& i: indices) {
         m_bits[i] = true;
     }
 }
 
-bool BloomFilter::contains(std::string& key) const {
+bool BloomFilter::contains(const std::string& key) const {
     auto indices = calcIndices(key);
     return std::all_of(indices.begin(), indices.end(), [this](auto i) { return m_bits[i]; });
 }
