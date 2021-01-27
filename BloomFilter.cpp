@@ -3,7 +3,7 @@
 //
 
 #include "BloomFilter.h"
-#include "../library/src/fnv1a.cpp"
+#include "../library/src/fnv1a.hpp"
 
 uint64_t Hash(const std::string& key) {
     return fnv1a_64(key);

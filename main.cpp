@@ -3,15 +3,8 @@
 #include <cassert>
 
 #include "BloomFilter.h"
-#include "../library/src/RandNum.cpp"
-#include "../library/src/timer.cpp"
-
-std::string random_string(const std::size_t &max_len, RandNum &ran) {
-    std::size_t size = ran(1, max_len);
-    std::string res(size, 0);
-    std::generate(res.begin(), res.end(), [&ran]() { return 'a' + ran(std::numeric_limits<long long>::max()) % 26; });
-    return res;
-}
+#include "../library/src/Random.hpp"
+#include "../library/src/Timer.hpp"
 
 int main() {
 
@@ -21,12 +14,14 @@ int main() {
     constexpr std::size_t table_size = 10000;
     constexpr std::size_t hash_num = (std::size_t)(0.7 * table_size / init_size + 0.5);
 
-    RandNum ran;
+    Random ran;
+    vector<std::string> keys(init_size);
+    generate(keys.begin(), keys.end(), [&]() { return ran.random_string(key_max); });
+
+    // STL set
     std::set<std::string> st;
-    BloomFilter bf(hash_num, table_size);
-    std::vector<std::string> vec(init_size);
-    for (std::size_t i = 0; i < init_size; i++) {
-        std::string key = random_string(key_max, ran);
+    // Bloom Filter
+    BloomFilter bf(hash_num, table_size);    for (const auto &key : keys) {
         st.emplace(key);
         bf.add(key);
     }
@@ -39,7 +34,7 @@ int main() {
     std::size_t fp_count = 0;
     for (int i = 0; i < test_size; i++) {
 
-        std::string key = random_string(key_max, ran);
+        std::string key = ran.random_string(key_max);
         bool st_exists = st.find(key) != st.end();
         bool bf_exists = bf.contains(key);
 
